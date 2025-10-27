@@ -1,9 +1,11 @@
 const jsonServer = require("json-server");
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
+
+// ⚡ جلوگیری از خطای ENOENT با غیرفعال کردن فایل‌های استاتیک
 const middlewares = jsonServer.defaults({ static: null });
 
-// ساده‌سازی CORS (تا وابستگی به cors باعث مشکل نشه)
+// فعال‌سازی CORS به صورت دستی
 server.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -18,7 +20,7 @@ server.use((req, res, next) => {
 server.use(middlewares);
 server.use(router);
 
-// Netlify Function export
+// خروجی به عنوان Netlify Function
 exports.handler = async (event, context) => {
   const handler = server.handle.bind(server);
   return new Promise((resolve) => {
@@ -48,7 +50,6 @@ exports.handler = async (event, context) => {
         });
       },
     };
-    // handle the request using json-server express handler
     handler(req, res);
   });
 };
